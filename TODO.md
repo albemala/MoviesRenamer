@@ -1,0 +1,2 @@
+- add option to also move movies to folder
+- add option to rename and move also subtitles
