@@ -8,13 +8,15 @@ import javafx.stage.Stage;
 
 public class MainApplication extends Application {
 
+    public static final String APP_NAME = "MoviesRenamer";
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         Scene scene = new Scene(root, 800, 600);
 
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle(APP_NAME);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

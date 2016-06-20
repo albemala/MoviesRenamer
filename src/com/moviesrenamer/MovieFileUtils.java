@@ -1,6 +1,9 @@
 package com.moviesrenamer;
 
+import javafx.collections.ObservableList;
+
 import java.io.File;
+import java.util.List;
 
 public class MovieFileUtils {
 
@@ -12,4 +15,5 @@ public class MovieFileUtils {
                 return true;
         return false;
     }
+
 }

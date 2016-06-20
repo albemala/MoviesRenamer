@@ -11,11 +11,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class MainController {
 
@@ -52,8 +48,8 @@ public class MainController {
         MenuItem addMoviesInFolderItem = new MenuItem("Add movies in folders");
         MenuItem addMoviesInFolderAndSubFoldersItem = new MenuItem("Add movies in folders AND sub-folders");
         addMoviesItem.setOnAction(this::addMoviesAction);
-        addMoviesInFolderItem.setOnAction(this::addMoviesInFolderAction);
-        addMoviesInFolderAndSubFoldersItem.setOnAction(this::addMoviesInFolderAndSubFoldersAction);
+        addMoviesInFolderItem.setOnAction(this::addMoviesInDirectoryAction);
+        addMoviesInFolderAndSubFoldersItem.setOnAction(this::addMoviesInDirectoryTreeAction);
         addMoviesItems.addAll(addMoviesItem, addMoviesInFolderItem, addMoviesInFolderAndSubFoldersItem);
         // init removeMoviesMenuButton items
         ObservableList<MenuItem> removeMoviesItems = removeMoviesMenuButton.getItems();
@@ -87,42 +83,27 @@ public class MainController {
         List<File> files = fileChooser.showOpenMultipleDialog(ControllerUtils.getWindow(rootPanel));
         if (files != null) {
             lastSelectedFile = files.get(0).getParentFile();
-            for (File file : files) {
-                movieFiles.add(new MovieFile(file));
-            }
+            MovieFileFactory.addMovieFilesToList(files, movieFiles);
         }
     }
 
-    private void addMoviesInFolderAction(ActionEvent event) {
+    private void addMoviesInDirectoryAction(ActionEvent event) {
         directoryChooser.setTitle("Add movies in folders");
         fileChooser.setInitialDirectory(lastSelectedFile);
         File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
         if (directory != null) {
             lastSelectedFile = directory;
-            try {
-                Stream<Path> paths = Files.list(directory.toPath());
-                for (Object o : paths.toArray()) {
-                    String absolutePath = o.toString();
-                    File file = new File(absolutePath);
-                    if (MovieFileUtils.isMovieFile(file)) {
-                        movieFiles.add(new MovieFile(file));
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            MovieFileFactory.addMovieFilesInDirectoryToList(directory, movieFiles);
         }
     }
 
-    private void addMoviesInFolderAndSubFoldersAction(ActionEvent event) {
-        System.out.println("add movies in folders and subfolders");
+    private void addMoviesInDirectoryTreeAction(ActionEvent event) {
         directoryChooser.setTitle("Add movies in folders AND sub-folders");
         fileChooser.setInitialDirectory(lastSelectedFile);
         File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
         if (directory != null) {
             lastSelectedFile = directory;
-            System.out.println(directory.getAbsolutePath());
-            // todo: finire
+            MovieFileFactory.addMovieFilesInDirectoryTreeToList(directory, movieFiles);
         }
     }
 
