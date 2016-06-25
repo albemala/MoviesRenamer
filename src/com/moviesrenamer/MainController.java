@@ -1,6 +1,5 @@
 package com.moviesrenamer;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,20 +22,17 @@ public class MainController {
     private GridPane rootPanel;
     @FXML
     private TableView<MovieFile> moviesTableView;
+
     private FileChooser fileChooser;
     private DirectoryChooser directoryChooser;
     private File lastSelectedFile;
-    private ObservableList<MovieFile> movieFiles;
+    private MovieFilesManager movieFilesManager;
 
     public MainController() {
         fileChooser = new FileChooser();
         directoryChooser = new DirectoryChooser();
         lastSelectedFile = new File(System.getProperty("user.home"));
-        movieFiles = FXCollections.observableArrayList(
-                new MovieFile(new File("/Users/albertomalagoli/Downloads/Night of the Living Dead[1968]DvDrip[Eng]-Stealthmaster.avi")),
-                new MovieFile(new File("/Users/albertomalagoli/Downloads/Paura e delirio a Las Vegas (1998, 118).avi")),
-                new MovieFile(new File("/Users/albertomalagoli/Downloads/Ricomincio Da Capo.avi"))
-        );
+        movieFilesManager=new MovieFilesManager();
     }
 
     @FXML
@@ -70,7 +66,7 @@ public class MainController {
         );
         moviesTableView.getColumns().clear();
         moviesTableView.getColumns().addAll(originalNameColumn, newNameColumn);
-        moviesTableView.setItems(movieFiles);
+        moviesTableView.setItems(movieFilesManager.getMovieFiles());
         moviesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
@@ -83,7 +79,7 @@ public class MainController {
         List<File> files = fileChooser.showOpenMultipleDialog(ControllerUtils.getWindow(rootPanel));
         if (files != null) {
             lastSelectedFile = files.get(0).getParentFile();
-            MovieFileFactory.addMovieFilesToList(files, movieFiles);
+            movieFilesManager.addMovieFilesToList(files);
         }
     }
 
@@ -93,7 +89,7 @@ public class MainController {
         File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
         if (directory != null) {
             lastSelectedFile = directory;
-            MovieFileFactory.addMovieFilesInDirectoryToList(directory, movieFiles);
+            movieFilesManager.addMovieFilesInDirectoryToList(directory);
         }
     }
 
@@ -103,16 +99,16 @@ public class MainController {
         File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
         if (directory != null) {
             lastSelectedFile = directory;
-            MovieFileFactory.addMovieFilesInDirectoryTreeToList(directory, movieFiles);
+            movieFilesManager.addMovieFilesInDirectoryTreeToList(directory);
         }
     }
 
     private void removeSelectedMoviesAction(ActionEvent event) {
         ObservableList<MovieFile> selectedItems = moviesTableView.getSelectionModel().getSelectedItems();
-        movieFiles.removeAll(selectedItems);
+        movieFilesManager.removeMovieFiles(selectedItems);
     }
 
     private void removeAllMoviesAction(ActionEvent event) {
-        movieFiles.clear();
+        movieFilesManager.clearMovieFiles();
     }
 }
