@@ -90,18 +90,15 @@ public class MovieFilesInfoFetcher {
         TmdbApi tmdbApi = new TmdbApi("25be8b4eb94ac1d6a4991b76947327ca");
 
         MovieGuessedInfo guessedInfo = movieFile.getGuessedInfo();
-        System.out.println(guessedInfo.title + ", " + guessedInfo.year);
         MovieResultsPage resultsPage = tmdbApi.getSearch().searchMovie(guessedInfo.title, guessedInfo.year, "", false, 0);
-        List<Integer> ids = new ArrayList<>();
-        for (MovieDb movieDb : resultsPage.getResults()) {
-            int id = movieDb.getId();
-            ids.add(id);
-//            System.out.println(movieDb.getTitle()+", "+ movieDb.getReleaseDate()+", "+ movieDb.getRuntime()+", "+ id);
-        }
+        List<MovieDb> results = resultsPage.getResults();
 
-        for (Integer id : ids) {
-            MovieDb movie = tmdbApi.getMovies().getMovie(id, "IT");
-            System.out.println(movie.toString() + ", " + movie.getRuntime());
+        List<MovieDb> movieDbs = new ArrayList<>();
+        for (int i = 0; i < results.size(); i++) {
+            int id = results.get(i).getId();
+            MovieDb movieDb = tmdbApi.getMovies().getMovie(id, "");
+            movieDbs.add(movieDb);
         }
+        movieFile.setMovieInfo(movieDbs);
     }
 }
