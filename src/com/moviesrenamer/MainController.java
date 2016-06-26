@@ -8,6 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
@@ -79,7 +80,7 @@ public class MainController {
         List<File> files = fileChooser.showOpenMultipleDialog(ControllerUtils.getWindow(rootPanel));
         if (files != null) {
             lastSelectedFile = files.get(0).getParentFile();
-            movieFilesManager.addMovieFilesToList(files);
+            @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesToList(files);
         }
     }
 
@@ -89,7 +90,7 @@ public class MainController {
         File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
         if (directory != null) {
             lastSelectedFile = directory;
-            movieFilesManager.addMovieFilesInDirectoryToList(directory);
+            @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryToList(directory);
         }
     }
 
@@ -99,7 +100,7 @@ public class MainController {
         File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
         if (directory != null) {
             lastSelectedFile = directory;
-            movieFilesManager.addMovieFilesInDirectoryTreeToList(directory);
+            @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryTreeToList(directory);
         }
     }
 
