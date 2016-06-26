@@ -1,5 +1,8 @@
 package com.moviesrenamer;
 
+import info.movito.themoviedbapi.TmdbApi;
+import info.movito.themoviedbapi.model.MovieDb;
+import info.movito.themoviedbapi.model.core.MovieResultsPage;
 import org.jetbrains.annotations.NotNull;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
@@ -9,6 +12,7 @@ import us.monoid.web.Resty;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -78,42 +82,26 @@ public class MovieFilesInfoFetcher {
             return;
         }
         MovieGuessedInfo movieGuessedInfo = MovieGuessedInfoFactory.fromJSON(jsonObject);
-        System.out.println(movieGuessedInfo.title);
         movieFile.setGuessedInfo(movieGuessedInfo);
     }
 
     private void fetchTmdbInfo(MovieFile movieFile) {
 
-//        TmdbApi tmdbApi = new TmdbApi("25be8b4eb94ac1d6a4991b76947327ca");
-//
-//        MovieGuessedInfo guessedInfo = movieFile.getGuessedInfo();
-//        System.out.println(guessedInfo.title+", "+ guessedInfo.year);
-//        MovieResultsPage resultsPage = tmdbApi.getSearch().searchMovie(guessedInfo.title, guessedInfo.year, "", false, 0);
-//        for (MovieDb movieDb : resultsPage.getResults()) {
-//            System.out.println(movieDb.toString());
-//        }
+        TmdbApi tmdbApi = new TmdbApi("25be8b4eb94ac1d6a4991b76947327ca");
 
+        MovieGuessedInfo guessedInfo = movieFile.getGuessedInfo();
+        System.out.println(guessedInfo.title + ", " + guessedInfo.year);
+        MovieResultsPage resultsPage = tmdbApi.getSearch().searchMovie(guessedInfo.title, guessedInfo.year, "", false, 0);
+        List<Integer> ids = new ArrayList<>();
+        for (MovieDb movieDb : resultsPage.getResults()) {
+            int id = movieDb.getId();
+            ids.add(id);
+//            System.out.println(movieDb.getTitle()+", "+ movieDb.getReleaseDate()+", "+ movieDb.getRuntime()+", "+ id);
+        }
 
-//        TheMovieDbApi tmdb;
-//        try {
-//            tmdb = new TheMovieDbApi("25be8b4eb94ac1d6a4991b76947327ca");
-//        } catch (MovieDbException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-//        MovieGuessedInfo guessedInfo = movieFile.getGuessedInfo();
-//        try {
-//            ResultList<MovieInfo> resultList = tmdb.searchMovie(guessedInfo.title, 0, "English", false, guessedInfo.year, 0, null);
-//            for (int i = 0; i < resultList.getResults().size(); i++) {
-//                MovieInfo movieInfo = resultList.getResults().get(i);
-//                System.out.println(movieInfo.toString());
-//                System.out.println(movieInfo.getReleaseDate());
-//                System.out.println(movieInfo.getRuntime());
-//                int id = movieInfo.getId();
-//            }
-//        } catch (MovieDbException e) {
-//            e.printStackTrace();
-//            return;
-//        }
+        for (Integer id : ids) {
+            MovieDb movie = tmdbApi.getMovies().getMovie(id, "IT");
+            System.out.println(movie.toString() + ", " + movie.getRuntime());
+        }
     }
 }
