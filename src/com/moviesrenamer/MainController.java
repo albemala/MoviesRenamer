@@ -28,12 +28,14 @@ public class MainController {
     private DirectoryChooser directoryChooser;
     private File lastSelectedFile;
     private MovieFilesManager movieFilesManager;
+    private MovieFilesInfoFetcher movieFilesInfoFetcher;
 
     public MainController() {
         fileChooser = new FileChooser();
         directoryChooser = new DirectoryChooser();
         lastSelectedFile = new File(System.getProperty("user.home"));
-        movieFilesManager=new MovieFilesManager();
+        movieFilesManager = new MovieFilesManager();
+        movieFilesInfoFetcher = new MovieFilesInfoFetcher();
     }
 
     @FXML
@@ -111,5 +113,11 @@ public class MainController {
 
     private void removeAllMoviesAction(ActionEvent event) {
         movieFilesManager.clearMovieFiles();
+    }
+
+    @FXML
+    public void renameMoviesAction(ActionEvent event) {
+        ObservableList<MovieFile> movieFiles = movieFilesManager.getMovieFiles();
+        movieFilesInfoFetcher.fetchMovieFilesInfo(movieFiles);
     }
 }

@@ -10,6 +10,7 @@ public class MovieFile {
     private File renamedFile;
     private SimpleStringProperty originalName;
     private SimpleStringProperty newName;
+    private MovieGuessedInfo guessedInfo;
 
     public MovieFile(File originalFile) {
         this.originalFile = originalFile;
@@ -25,5 +26,13 @@ public class MovieFile {
 
     public String getNewName() {
         return newName.get();
+    }
+
+    public void setGuessedInfo(MovieGuessedInfo guessedInfo) {
+        this.guessedInfo = guessedInfo;
+    }
+
+    public MovieGuessedInfo getGuessedInfo() {
+        return guessedInfo;
     }
 }
