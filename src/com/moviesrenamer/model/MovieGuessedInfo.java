@@ -1,4 +1,4 @@
-package com.moviesrenamer;
+package com.moviesrenamer.model;
 
 public class MovieGuessedInfo {
     public String title;

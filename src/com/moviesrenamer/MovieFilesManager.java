@@ -1,5 +1,6 @@
 package com.moviesrenamer;
 
+import com.moviesrenamer.model.MovieFile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.jetbrains.annotations.NotNull;
@@ -21,13 +22,19 @@ public class MovieFilesManager {
 
     public MovieFilesManager() {
         movieFiles = FXCollections.observableArrayList(
-                new MovieFile(new File("/Users/albertomalagoli/Downloads/Night of the Living Dead[1968]DvDrip[Eng]-Stealthmaster.avi"))
-//                new MovieFile(new File("/Users/albertomalagoli/Downloads/Paura e delirio a Las Vegas (1998, 118).avi")),
-//                new MovieFile(new File("/Users/albertomalagoli/Downloads/Ricomincio Da Capo.avi")),
-//                new MovieFile(new File("/Users/albertomalagoli/Downloads/Collateral.2004.720p.BrRip.x264.YIFY.mp4")),
-//                new MovieFile(new File("/Users/albertomalagoli/Downloads/Jaws.1975.720p.BrRip.x264.bitloks.YIFY.mp4")),
-//                new MovieFile(new File("/Users/albertomalagoli/Downloads/L'Esorcista [Divx -ITA] [Anacletus] cd 1 of 2.avi"))
+                new MovieFile(),
+                new MovieFile(),
+                new MovieFile()
+//                new MovieFile(),
+//                new MovieFile(),
+//                new MovieFile()
         );
+        movieFiles.get(0).setOriginalFile(new File("/Users/albertomalagoli/Downloads/Paura e delirio a Las Vegas (1998, 118).avi"));
+        movieFiles.get(1).setOriginalFile(new File("/Users/albertomalagoli/Downloads/Night of the Living Dead[1968]DvDrip[Eng]-Stealthmaster.avi"));
+        movieFiles.get(2).setOriginalFile(new File("/Users/albertomalagoli/Downloads/Ricomincio Da Capo.avi"));
+//        movieFiles.get(3).setOriginalFile(new File("/Users/albertomalagoli/Downloads/Collateral.2004.720p.BrRip.x264.YIFY.mp4"));
+//        movieFiles.get(4).setOriginalFile(new File("/Users/albertomalagoli/Downloads/Jaws.1975.720p.BrRip.x264.bitloks.YIFY.mp4"));
+//        movieFiles.get(5).setOriginalFile(new File("/Users/albertomalagoli/Downloads/L'Esorcista [Divx -ITA] [Anacletus] cd 1 of 2.avi"));
     }
 
     @NotNull
@@ -84,7 +91,8 @@ public class MovieFilesManager {
     @Nullable
     private MovieFile addMovieFileToList(File file) {
         if (MovieFileUtils.isMovieFile(file)) {
-            MovieFile movieFile = new MovieFile(file);
+            MovieFile movieFile = new MovieFile();
+            movieFile.setOriginalFile(file);
             movieFiles.add(movieFile);
             return movieFile;
         }

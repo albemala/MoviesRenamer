@@ -1,5 +1,6 @@
-package com.moviesrenamer;
+package com.moviesrenamer.factory;
 
+import com.moviesrenamer.model.MovieGuessedInfo;
 import us.monoid.json.JSONException;
 import us.monoid.json.JSONObject;
 

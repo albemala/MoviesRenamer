@@ -1,11 +1,14 @@
 package com.moviesrenamer;
 
+import com.moviesrenamer.model.MovieFile;
+import com.moviesrenamer.model.MovieInfo;
+import com.moviesrenamer.tasks.FetchTMDBInfoTask;
+import com.moviesrenamer.tasks.GuessInfoTask;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
@@ -13,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
-public class MainController {
+public class MainController implements GuessInfoTask.GuessInfoTaskListener, FetchTMDBInfoTask.FetchTMDBInfoTaskListener {
 
     @FXML
     private MenuButton removeMoviesMenuButton;
     @FXML
     private MenuButton addMoviesMenuButton;
     @FXML
-    private GridPane rootPanel;
+    private SplitPane rootPanel;
     @FXML
     private TableView<MovieFile> moviesTableView;
 
@@ -28,14 +31,14 @@ public class MainController {
     private DirectoryChooser directoryChooser;
     private File lastSelectedFile;
     private MovieFilesManager movieFilesManager;
-    private MovieFilesInfoFetcher movieFilesInfoFetcher;
+    private TasksManager tasksManager;
 
     public MainController() {
         fileChooser = new FileChooser();
         directoryChooser = new DirectoryChooser();
         lastSelectedFile = new File(System.getProperty("user.home"));
         movieFilesManager = new MovieFilesManager();
-        movieFilesInfoFetcher = new MovieFilesInfoFetcher();
+        tasksManager = new TasksManager();
     }
 
     @FXML
@@ -71,6 +74,12 @@ public class MainController {
         moviesTableView.getColumns().addAll(originalNameColumn, newNameColumn);
         moviesTableView.setItems(movieFilesManager.getMovieFiles());
         moviesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        tasksManager.start();
+    }
+
+    public void stop() {
+        tasksManager.stop();
     }
 
     private void addMoviesAction(ActionEvent event) {
@@ -83,6 +92,7 @@ public class MainController {
         if (files != null) {
             lastSelectedFile = files.get(0).getParentFile();
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesToList(files);
+            startGuessInfoTasks(movieFiles);
         }
     }
 
@@ -93,6 +103,7 @@ public class MainController {
         if (directory != null) {
             lastSelectedFile = directory;
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryToList(directory);
+            startGuessInfoTasks(movieFiles);
         }
     }
 
@@ -103,6 +114,7 @@ public class MainController {
         if (directory != null) {
             lastSelectedFile = directory;
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryTreeToList(directory);
+            startGuessInfoTasks(movieFiles);
         }
     }
 
@@ -118,6 +130,29 @@ public class MainController {
     @FXML
     public void renameMoviesAction(ActionEvent event) {
         ObservableList<MovieFile> movieFiles = movieFilesManager.getMovieFiles();
-        movieFilesInfoFetcher.fetchMovieFilesInfo(movieFiles);
+        startGuessInfoTasks(movieFiles);
+    }
+
+    private void startGuessInfoTasks(List<MovieFile> movieFiles) {
+        for (MovieFile movieFile : movieFiles) {
+            GuessInfoTask guessInfoTask = new GuessInfoTask(movieFile);
+            guessInfoTask.setListener(this);
+            tasksManager.addTask(guessInfoTask);
+        }
+    }
+
+    @Override
+    public void onGuessInfoTaskFinished(MovieFile movieFile) {
+        FetchTMDBInfoTask fetchTMDBInfoTask = new FetchTMDBInfoTask(movieFile);
+        fetchTMDBInfoTask.setListener(this);
+        tasksManager.addTask(fetchTMDBInfoTask);
+    }
+
+    @Override
+    public void onFetchTMDBInfoTaskFinished(MovieFile movieFile) {
+        List<MovieInfo> movieInfo = movieFile.getMovieInfo();
+        for (MovieInfo info : movieInfo) {
+            System.out.println(info.title + ", " + info.releaseDate + ", " + info.runtime);
+        }
     }
 }

@@ -6,14 +6,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.URL;
+
 public class MainApplication extends Application {
 
     public static final String APP_NAME = "MoviesRenamer";
+    private MainController mainController;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("main.fxml"));
+        Parent root = fxmlLoader.load();
+        mainController = fxmlLoader.getController();
         Scene scene = new Scene(root, 800, 600);
 
         primaryStage.setTitle(APP_NAME);
@@ -21,6 +27,11 @@ public class MainApplication extends Application {
         primaryStage.show();
     }
 
+    @Override
+    public void stop() throws Exception {
+        mainController.stop();
+        super.stop();
+    }
 
     public static void main(String[] args) {
         launch(args);

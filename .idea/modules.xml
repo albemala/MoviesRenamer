@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MoviesRenamer.iml" filepath="$PROJECT_DIR$/.idea/modules/MoviesRenamer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MoviesRenamer.iml" filepath="$PROJECT_DIR$/MoviesRenamer.iml" />
       <module fileurl="file://$PROJECT_DIR$/themoviedbapi-1.4/themoviedbapi.iml" filepath="$PROJECT_DIR$/themoviedbapi-1.4/themoviedbapi.iml" />
     </modules>
   </component>

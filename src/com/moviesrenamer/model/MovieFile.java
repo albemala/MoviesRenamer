@@ -1,6 +1,5 @@
-package com.moviesrenamer;
+package com.moviesrenamer.model;
 
-import info.movito.themoviedbapi.model.MovieDb;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.File;
@@ -9,22 +8,32 @@ import java.util.List;
 public class MovieFile {
 
     private File originalFile;
-    private File renamedFile;
     private SimpleStringProperty originalName;
     private SimpleStringProperty newName;
     private MovieGuessedInfo guessedInfo;
-    private List<MovieDb> movieInfo;
+    private List<MovieInfo> movieInfo;
 
-    public MovieFile(File originalFile) {
+    public MovieFile() {
+        originalName = new SimpleStringProperty();
+        newName = new SimpleStringProperty();
+    }
+
+    public void setOriginalFile(File originalFile) {
         this.originalFile = originalFile;
-        renamedFile = new File("");
-        originalName = new SimpleStringProperty(originalFile.getName());
-//        newName=new SimpleStringProperty(renamedFile.getName());
-        newName = new SimpleStringProperty("");
+        originalName.set(originalFile.getName());
+        newName.set("");
+    }
+
+    public File getOriginalFile() {
+        return originalFile;
     }
 
     public String getOriginalName() {
         return originalName.get();
+    }
+
+    public void setNewName(String newName) {
+        this.newName.set(newName);
     }
 
     public String getNewName() {
@@ -39,11 +48,11 @@ public class MovieFile {
         return guessedInfo;
     }
 
-    public void setMovieInfo(List<MovieDb> movieInfo) {
+    public void setMovieInfo(List<MovieInfo> movieInfo) {
         this.movieInfo = movieInfo;
     }
 
-    public List<MovieDb> getMovieInfo() {
+    public List<MovieInfo> getMovieInfo() {
         return movieInfo;
     }
 }
