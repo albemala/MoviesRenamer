@@ -1,6 +1,8 @@
 package com.moviesrenamer.model;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.util.List;
@@ -11,11 +13,14 @@ public class MovieFile {
     private SimpleStringProperty originalName;
     private SimpleStringProperty newName;
     private MovieGuessedInfo guessedInfo;
-    private List<MovieInfo> movieInfo;
+    private ObservableList<MovieInfo> movieInfoList;
+    private int selectedMovieInfo;
 
     public MovieFile() {
         originalName = new SimpleStringProperty();
         newName = new SimpleStringProperty();
+        movieInfoList = FXCollections.observableArrayList();
+        selectedMovieInfo = 0;
     }
 
     public void setOriginalFile(File originalFile) {
@@ -49,10 +54,18 @@ public class MovieFile {
     }
 
     public void setMovieInfo(List<MovieInfo> movieInfo) {
-        this.movieInfo = movieInfo;
+        movieInfoList.addAll(movieInfo);
     }
 
-    public List<MovieInfo> getMovieInfo() {
-        return movieInfo;
+    public ObservableList<MovieInfo> getMovieInfo() {
+        return movieInfoList;
+    }
+
+    public int getSelectedMovieInfo() {
+        return selectedMovieInfo;
+    }
+
+    public void setSelectedMovieInfo(int selectedMovieInfo) {
+        this.selectedMovieInfo = selectedMovieInfo;
     }
 }

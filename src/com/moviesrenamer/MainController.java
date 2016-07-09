@@ -23,9 +23,11 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
     @FXML
     private MenuButton addMoviesMenuButton;
     @FXML
-    private SplitPane rootPanel;
+    private SplitPane splitPane;
     @FXML
     private TableView<MovieFile> moviesTableView;
+    @FXML
+    private TableView<MovieInfo> movieInfoTableView;
 
     private FileChooser fileChooser;
     private DirectoryChooser directoryChooser;
@@ -44,36 +46,85 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
     @FXML
     public void initialize() {
         // init addMoviesMenuButton items
-        ObservableList<MenuItem> addMoviesItems = addMoviesMenuButton.getItems();
-        addMoviesItems.clear();
-        MenuItem addMoviesItem = new MenuItem("Add movies");
-        MenuItem addMoviesInFolderItem = new MenuItem("Add movies in folders");
-        MenuItem addMoviesInFolderAndSubFoldersItem = new MenuItem("Add movies in folders AND sub-folders");
-        addMoviesItem.setOnAction(this::addMoviesAction);
-        addMoviesInFolderItem.setOnAction(this::addMoviesInDirectoryAction);
-        addMoviesInFolderAndSubFoldersItem.setOnAction(this::addMoviesInDirectoryTreeAction);
-        addMoviesItems.addAll(addMoviesItem, addMoviesInFolderItem, addMoviesInFolderAndSubFoldersItem);
+        {
+            ObservableList<MenuItem> addMoviesItems = addMoviesMenuButton.getItems();
+            addMoviesItems.clear();
+            MenuItem addMoviesItem = new MenuItem("Add movies");
+            MenuItem addMoviesInFolderItem = new MenuItem("Add movies in folders");
+            MenuItem addMoviesInFolderAndSubFoldersItem = new MenuItem("Add movies in folders AND sub-folders");
+            addMoviesItem.setOnAction(this::addMoviesAction);
+            addMoviesInFolderItem.setOnAction(this::addMoviesInDirectoryAction);
+            addMoviesInFolderAndSubFoldersItem.setOnAction(this::addMoviesInDirectoryTreeAction);
+            addMoviesItems.addAll(addMoviesItem, addMoviesInFolderItem, addMoviesInFolderAndSubFoldersItem);
+        }
         // init removeMoviesMenuButton items
-        ObservableList<MenuItem> removeMoviesItems = removeMoviesMenuButton.getItems();
-        removeMoviesItems.clear();
-        MenuItem removeSelectedMoviesItem = new MenuItem("Remove selected movie(s)");
-        removeSelectedMoviesItem.setOnAction(this::removeSelectedMoviesAction);
-        MenuItem removeAllMoviesItem = new MenuItem("Remove ALL movies");
-        removeAllMoviesItem.setOnAction(this::removeAllMoviesAction);
-        removeMoviesItems.addAll(removeSelectedMoviesItem, removeAllMoviesItem);
+        {
+            ObservableList<MenuItem> removeMoviesItems = removeMoviesMenuButton.getItems();
+            removeMoviesItems.clear();
+            MenuItem removeSelectedMoviesItem = new MenuItem("Remove selected movie(s)");
+            removeSelectedMoviesItem.setOnAction(this::removeSelectedMoviesAction);
+            MenuItem removeAllMoviesItem = new MenuItem("Remove ALL movies");
+            removeAllMoviesItem.setOnAction(this::removeAllMoviesAction);
+            removeMoviesItems.addAll(removeSelectedMoviesItem, removeAllMoviesItem);
+        }
         // init moviesTableView
-        TableColumn<MovieFile, String> originalNameColumn = new TableColumn<>("Original name");
-        originalNameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("originalName")
-        );
-        TableColumn<MovieFile, String> newNameColumn = new TableColumn<>("New name");
-        newNameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("newName")
-        );
-        moviesTableView.getColumns().clear();
-        moviesTableView.getColumns().addAll(originalNameColumn, newNameColumn);
-        moviesTableView.setItems(movieFilesManager.getMovieFiles());
-        moviesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        {
+            TableColumn<MovieFile, String> originalNameColumn = new TableColumn<>("Original name");
+            originalNameColumn.setCellValueFactory(
+                    new PropertyValueFactory<>("originalName")
+            );
+            TableColumn<MovieFile, String> newNameColumn = new TableColumn<>("New name");
+            newNameColumn.setCellValueFactory(
+                    new PropertyValueFactory<>("newName")
+            );
+            moviesTableView.getColumns().clear();
+            moviesTableView.getColumns().addAll(originalNameColumn, newNameColumn);
+            moviesTableView.setItems(movieFilesManager.getMovieFiles());
+            moviesTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            moviesTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                MovieFile movieFile = observable.getValue();
+                if (movieFile != null) {
+                    ObservableList<MovieInfo> movieInfo = movieFile.getMovieInfo();
+                    movieInfoTableView.setItems(movieInfo);
+                    if (movieInfo.size() > 0) {
+                        movieInfoTableView.getSelectionModel().select(movieFile.getSelectedMovieInfo());
+                    }
+                } else {
+                    movieInfoTableView.getItems().clear();
+                }
+            });
+        }
+        // init movieInfoTableView
+        {
+            TableColumn<MovieInfo, String> titleColumn = new TableColumn<>("Title");
+            titleColumn.setCellValueFactory(
+                    new PropertyValueFactory<>("title")
+            );
+            TableColumn<MovieInfo, String> originalTitleColumn = new TableColumn<>("Original title");
+            originalTitleColumn.setCellValueFactory(
+                    new PropertyValueFactory<>("originalTitle")
+            );
+            TableColumn<MovieInfo, String> releaseDateColumn = new TableColumn<>("Release date");
+            releaseDateColumn.setCellValueFactory(
+                    new PropertyValueFactory<>("releaseDate")
+            );
+            TableColumn<MovieInfo, Integer> runtimeColumn = new TableColumn<>("Runtime");
+            runtimeColumn.setCellValueFactory(
+                    new PropertyValueFactory<>("runtime")
+            );
+            movieInfoTableView.getColumns().clear();
+            movieInfoTableView.getColumns().addAll(titleColumn, originalTitleColumn, releaseDateColumn, runtimeColumn);
+            movieInfoTableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            movieInfoTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                MovieInfo movieInfo = observable.getValue();
+                if (movieInfo != null) {
+                    MovieFile movieFile = moviesTableView.getSelectionModel().getSelectedItem();
+                    int index = movieFile.getMovieInfo().indexOf(movieInfo);
+                    if (movieFile.getSelectedMovieInfo() != index)
+                        movieFile.setSelectedMovieInfo(index);
+                }
+            });
+        }
 
         tasksManager.start();
     }
@@ -88,7 +139,7 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Movies", MovieFileUtils.EXTENSIONS)
         );
-        List<File> files = fileChooser.showOpenMultipleDialog(ControllerUtils.getWindow(rootPanel));
+        List<File> files = fileChooser.showOpenMultipleDialog(ControllerUtils.getWindow(splitPane));
         if (files != null) {
             lastSelectedFile = files.get(0).getParentFile();
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesToList(files);
@@ -99,7 +150,7 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
     private void addMoviesInDirectoryAction(ActionEvent event) {
         directoryChooser.setTitle("Add movies in folders");
         fileChooser.setInitialDirectory(lastSelectedFile);
-        File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
+        File directory = directoryChooser.showDialog(ControllerUtils.getWindow(splitPane));
         if (directory != null) {
             lastSelectedFile = directory;
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryToList(directory);
@@ -110,7 +161,7 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
     private void addMoviesInDirectoryTreeAction(ActionEvent event) {
         directoryChooser.setTitle("Add movies in folders AND sub-folders");
         fileChooser.setInitialDirectory(lastSelectedFile);
-        File directory = directoryChooser.showDialog(ControllerUtils.getWindow(rootPanel));
+        File directory = directoryChooser.showDialog(ControllerUtils.getWindow(splitPane));
         if (directory != null) {
             lastSelectedFile = directory;
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryTreeToList(directory);

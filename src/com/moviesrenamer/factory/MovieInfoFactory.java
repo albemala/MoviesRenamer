@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 public class MovieInfoFactory {
     public static @NotNull MovieInfo fromMovieDb(MovieDb movieDb) {
         MovieInfo movieInfo = new MovieInfo();
-        movieInfo.title = movieDb.getTitle();
-        movieInfo.originalTitle = movieDb.getOriginalTitle();
-        movieInfo.releaseDate = movieDb.getReleaseDate().split("-")[0];
-        movieInfo.runtime = movieDb.getRuntime();
+        movieInfo.setTitle(movieDb.getTitle());
+        movieInfo.setOriginalTitle(movieDb.getOriginalTitle());
+        movieInfo.setReleaseDate(movieDb.getReleaseDate().split("-")[0]);
+        movieInfo.setRuntime(movieDb.getRuntime());
         return movieInfo;
     }
 }
