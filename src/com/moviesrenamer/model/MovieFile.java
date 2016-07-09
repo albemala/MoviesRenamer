@@ -1,5 +1,7 @@
 package com.moviesrenamer.model;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,18 +11,25 @@ import java.util.List;
 
 public class MovieFile {
 
+    public enum State {
+        Normal,
+        Updating
+    }
+
     private File originalFile;
     private SimpleStringProperty originalName;
     private SimpleStringProperty newName;
     private MovieGuessedInfo guessedInfo;
     private ObservableList<MovieInfo> movieInfoList;
     private int selectedMovieInfo;
+    private IntegerProperty state;
 
     public MovieFile() {
         originalName = new SimpleStringProperty();
         newName = new SimpleStringProperty();
         movieInfoList = FXCollections.observableArrayList();
         selectedMovieInfo = 0;
+        state = new SimpleIntegerProperty(State.Normal.ordinal());
     }
 
     public void setOriginalFile(File originalFile) {
@@ -67,5 +76,17 @@ public class MovieFile {
 
     public void setSelectedMovieInfo(int selectedMovieInfo) {
         this.selectedMovieInfo = selectedMovieInfo;
+    }
+
+    public IntegerProperty getStateProperty() {
+        return state;
+    }
+
+    public State getState() {
+        return State.values()[state.get()];
+    }
+
+    public void setState(State state) {
+        this.state.set(state.ordinal());
     }
 }
