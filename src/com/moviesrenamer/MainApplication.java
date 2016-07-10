@@ -19,11 +19,11 @@ public class MainApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("main.fxml"));
         Parent root = fxmlLoader.load();
+
         mainController = fxmlLoader.getController();
-        Scene scene = new Scene(root, 800, 600);
 
         primaryStage.setTitle(APP_NAME);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
     }
 

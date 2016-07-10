@@ -7,14 +7,19 @@ import com.moviesrenamer.tasks.GuessInfoTask;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class MainController implements GuessInfoTask.GuessInfoTaskListener, FetchTMDBInfoTask.FetchTMDBInfoTaskListener {
@@ -198,6 +203,23 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
 
     private void removeAllMoviesAction(ActionEvent event) {
         movieFilesManager.clearMovieFiles();
+    }
+
+    @FXML
+    public void showRenamingRuleDialog() {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("renaming_rule.fxml"));
+        try {
+            Parent root = fxmlLoader.load();
+            RenamingRuleController controller = fxmlLoader.getController();
+            Stage stage = new Stage();
+            stage.setTitle("Renaming rule");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
