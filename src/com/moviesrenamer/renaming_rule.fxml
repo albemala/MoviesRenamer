@@ -43,17 +43,17 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </GridPane.margin>
       </Label>
-      <ListView fx:id="renamingRuleListView" prefHeight="66.0" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="2">
+      <ListView fx:id="renamingRuleListView" orientation="HORIZONTAL" prefHeight="33.0" GridPane.columnSpan="4" GridPane.rowIndex="2">
          <GridPane.margin>
-            <Insets left="8.0" />
+            <Insets left="8.0" top="8.0" />
          </GridPane.margin>
       </ListView>
-      <Button mnemonicParsing="false" onAction="#removeSelectedRule" text="Remove selected" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+      <Button mnemonicParsing="false" onAction="#removeSelectedRule" text="Remove selected" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
          <GridPane.margin>
             <Insets left="8.0" right="8.0" />
          </GridPane.margin>
       </Button>
-      <Button mnemonicParsing="false" onAction="#clearRule" text="Clear rule" textFill="RED" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+      <Button mnemonicParsing="false" onAction="#clearRule" text="Clear rule" textFill="RED" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
       <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addTitle" text="+ Title" GridPane.columnSpan="2" GridPane.rowIndex="3">
          <GridPane.margin>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -154,5 +154,7 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </GridPane.margin>
       </Button>
+      <Button mnemonicParsing="false" text="&lt;" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+      <Button mnemonicParsing="false" text="&gt;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
    </children>
 </GridPane>
