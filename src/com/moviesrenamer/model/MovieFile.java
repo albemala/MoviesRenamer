@@ -28,6 +28,7 @@ public class MovieFile {
         originalName = new SimpleStringProperty();
         newName = new SimpleStringProperty();
         movieInfoList = FXCollections.observableArrayList();
+        guessedInfo = new MovieGuessedInfo();
         selectedMovieInfo = 0;
         state = new SimpleIntegerProperty(State.Normal.ordinal());
     }
@@ -55,7 +56,16 @@ public class MovieFile {
     }
 
     public void setGuessedInfo(MovieGuessedInfo guessedInfo) {
-        this.guessedInfo = guessedInfo;
+        if (!guessedInfo.title.equals(""))
+            this.guessedInfo.title = guessedInfo.title;
+        if (guessedInfo.year != 0)
+            this.guessedInfo.year = guessedInfo.year;
+        if (!guessedInfo.language.equals(""))
+            this.guessedInfo.language = guessedInfo.language;
+        if (guessedInfo.cd != 0)
+            this.guessedInfo.cd = guessedInfo.cd;
+        if (guessedInfo.cdCount != 0)
+            this.guessedInfo.cdCount = guessedInfo.cdCount;
     }
 
     public MovieGuessedInfo getGuessedInfo() {
@@ -63,7 +73,7 @@ public class MovieFile {
     }
 
     public void setMovieInfo(List<MovieInfo> movieInfo) {
-        movieInfoList.addAll(movieInfo);
+        movieInfoList.setAll(movieInfo);
     }
 
     public ObservableList<MovieInfo> getMovieInfo() {

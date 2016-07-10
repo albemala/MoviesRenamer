@@ -33,6 +33,8 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
     private ProgressBar movieInfoProgress;
     @FXML
     private VBox movieInfoPanel;
+    @FXML
+    private TextField movieInfoSearchField;
 
     private FileChooser fileChooser;
     private DirectoryChooser directoryChooser;
@@ -100,6 +102,7 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
                     movieInfoTableView.getItems().clear();
                     movieInfoPanel.setDisable(true);
                 }
+                movieInfoSearchField.setText("");
             });
         }
         // init movieInfoTableView
@@ -160,7 +163,7 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
             lastSelectedFile = files.get(0).getParentFile();
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesToList(files);
             bindMovieInfoStateChanged(movieFiles);
-            startGuessInfoTasks(movieFiles);
+            movieFiles.forEach((movieFile) -> startGuessInfoTask(movieFile, movieFile.getOriginalName()));
         }
     }
 
@@ -172,7 +175,7 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
             lastSelectedFile = directory;
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryToList(directory);
             bindMovieInfoStateChanged(movieFiles);
-            startGuessInfoTasks(movieFiles);
+            movieFiles.forEach((movieFile) -> startGuessInfoTask(movieFile, movieFile.getOriginalName()));
         }
     }
 
@@ -184,7 +187,7 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
             lastSelectedFile = directory;
             @NotNull List<MovieFile> movieFiles = movieFilesManager.addMovieFilesInDirectoryTreeToList(directory);
             bindMovieInfoStateChanged(movieFiles);
-            startGuessInfoTasks(movieFiles);
+            movieFiles.forEach((movieFile) -> startGuessInfoTask(movieFile, movieFile.getOriginalName()));
         }
     }
 
@@ -200,7 +203,15 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
     @FXML
     public void renameMoviesAction(ActionEvent event) {
         ObservableList<MovieFile> movieFiles = movieFilesManager.getMovieFiles();
-        startGuessInfoTasks(movieFiles);
+        movieFiles.forEach((movieFile) -> startGuessInfoTask(movieFile, movieFile.getOriginalName()));
+    }
+
+    @FXML
+    public void searchMovie(ActionEvent event) {
+        MovieFile movieFile = moviesTableView.getSelectionModel().getSelectedItem();
+        if (movieFile == null) return;
+        String searchString = movieInfoSearchField.getText();
+        startGuessInfoTask(movieFile, searchString);
     }
 
     private void bindMovieInfoStateChanged(List<MovieFile> movieFiles) {
@@ -223,13 +234,11 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
         }
     }
 
-    private void startGuessInfoTasks(List<MovieFile> movieFiles) {
-        for (MovieFile movieFile : movieFiles) {
-            movieFile.setState(MovieFile.State.Updating);
-            GuessInfoTask guessInfoTask = new GuessInfoTask(movieFile);
-            guessInfoTask.setListener(this);
-            tasksManager.addTask(guessInfoTask);
-        }
+    private void startGuessInfoTask(MovieFile movieFile, String searchString) {
+        movieFile.setState(MovieFile.State.Updating);
+        GuessInfoTask guessInfoTask = new GuessInfoTask(movieFile, searchString);
+        guessInfoTask.setListener(this);
+        tasksManager.addTask(guessInfoTask);
     }
 
     @Override

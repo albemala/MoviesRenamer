@@ -75,12 +75,12 @@
             </VBox.margin>
         </Text>
         <HBox prefHeight="100.0" prefWidth="200.0">
-            <TextField HBox.hgrow="ALWAYS">
+            <TextField fx:id="movieInfoSearchField" onAction="#searchMovie" HBox.hgrow="ALWAYS">
                 <HBox.margin>
                     <Insets bottom="8.0" left="8.0" right="8.0" />
                 </HBox.margin>
             </TextField>
-            <Button mnemonicParsing="false" text="Search">
+            <Button mnemonicParsing="false" onAction="#searchMovie" text="Search">
                 <HBox.margin>
                     <Insets bottom="8.0" right="8.0" />
                 </HBox.margin>

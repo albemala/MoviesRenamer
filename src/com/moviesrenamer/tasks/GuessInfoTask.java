@@ -20,9 +20,11 @@ public class GuessInfoTask extends Task {
 
     private MovieFile movieFile;
     private GuessInfoTaskListener listener;
+    private String searchString;
 
-    public GuessInfoTask(MovieFile movieFile) {
+    public GuessInfoTask(MovieFile movieFile, String searchString) {
         this.movieFile = movieFile;
+        this.searchString = searchString;
     }
 
     public void setListener(GuessInfoTaskListener listener) {
@@ -34,7 +36,7 @@ public class GuessInfoTask extends Task {
         Resty resty = new Resty();
         String originalMovieNameEncoded;
         try {
-            originalMovieNameEncoded = URLEncoder.encode(movieFile.getOriginalName(), "UTF-8");
+            originalMovieNameEncoded = URLEncoder.encode(searchString, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return;
