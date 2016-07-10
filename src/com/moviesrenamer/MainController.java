@@ -89,12 +89,14 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
             moviesTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 MovieFile movieFile = observable.getValue();
                 if (movieFile != null) {
+                    movieInfoPanel.setDisable(false);
                     ObservableList<MovieInfo> movieInfo = movieFile.getMovieInfo();
                     movieInfoTableView.setItems(movieInfo);
                     if (movieInfo.size() > 0) {
                         movieInfoTableView.getSelectionModel().select(movieFile.getSelectedMovieInfo());
                     }
                 } else {
+                    movieInfoPanel.setDisable(true);
                     movieInfoTableView.getItems().clear();
                     movieInfoPanel.setDisable(true);
                 }
@@ -133,6 +135,8 @@ public class MainController implements GuessInfoTask.GuessInfoTaskListener, Fetc
         }
         movieInfoProgress.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
         movieInfoProgress.setVisible(false);
+
+        movieInfoPanel.setDisable(true);
 
         @NotNull ObservableList<MovieFile> movieFiles = movieFilesManager.getMovieFiles();
         bindMovieInfoStateChanged(movieFiles);
